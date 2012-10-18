@@ -87,7 +87,7 @@ else
 fi
 REPOSITORY="$DIRECTORY/$SITE"
 
-REPOSITORY_URL=git://github.com/mysociety/$SITE.git
+REPOSITORY_URL=git://github.com/morusab/$SITE.git
 BRANCH=master
 
 DISTRIBUTION="$(lsb_release -i -s  | tr A-Z a-z)"
