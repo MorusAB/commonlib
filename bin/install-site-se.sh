@@ -61,7 +61,8 @@ apt-get install -y git-core lockfile-progs rubygems curl dnsutils lsb-release
 
 # If we're not running on an EC2 instance, an empty body is returned
 # by this request:
-EC2_HOSTNAME=`curl -s http://169.254.169.254/latest/meta-data/public-hostname || true`
+EC2_HOSTNAME="dev.fixamingata.se"
+# `curl -s http://169.254.169.254/latest/meta-data/public-hostname || true`
 
 if [ $# = 2 ]
 then
@@ -86,8 +87,7 @@ else
 fi
 REPOSITORY="$DIRECTORY/$SITE"
 
-#REPOSITORY_URL=git://github.com/mysociety/$SITE.git
-REPOSITORY_URL=git://github.com/MorusAB/$SITE.git
+REPOSITORY_URL=git://github.com/mysociety/$SITE.git
 BRANCH=master
 
 DISTRIBUTION="$(lsb_release -i -s  | tr A-Z a-z)"
