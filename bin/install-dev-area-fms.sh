@@ -30,11 +30,14 @@ BETA_INSTALL_DIR=${WEB_ROOT}/beta.fixamingata.se
 #  They need to be outside the git repository, so for now,
 #+ we keep them in root's home.
 CONFIG_FILES_DIR=/root/development/config-scripts/fixmystreet
+CONFIG_FILE_FIXMYSTREET=general.yml
 
 #  The htpassword for "admin" (will be copied)
 ADMIN_HTPASSWORD=${BETA_INSTALL_DIR}/admin-htpasswd
 
 DEBUG=true
+
+HOSTNAME=$1
 
 function debug(){
 	$DEBUG && echo $1
@@ -45,22 +48,21 @@ function debug(){
 #+ area. Call this function with the full hostname for the
 #+ development area.
 function make_web_dirs(){
-	site=$1
 	declare -i status;
 	status=0
 
-	if [ -x ${WEB_ROOT}/${site} ]
+	if [ -x ${WEB_ROOT}/${HOSTNAME} ]
 	then
-		debug "Fatal error in make_web_dirs,  ${WEB_ROOT}/${site} already exists."
+		debug "Fatal error in make_web_dirs,  ${WEB_ROOT}/${HOSTNAME} already exists."
 		return 50
 	fi
 	# Directory for Document ROOT etc
-	mkdir  ${WEB_ROOT}/${site} || status=1
+	mkdir  ${WEB_ROOT}/${HOSTNAME} || status=1
 	# A cache dir is needed for the fms server
-	mkdir  ${WEB_ROOT}/${site}/cache || status=2
+	mkdir  ${WEB_ROOT}/${HOSTNAME}/cache || status=2
 	# We'll log the nginx here
-	mkdir  ${WEB_ROOT}/${site}/log || status=3
-	chown -R ${FMS_USER}:  ${WEB_ROOT}/${site} || status=4
+	mkdir  ${WEB_ROOT}/${HOSTNAME}/log || status=3
+	chown -R ${FMS_USER}:  ${WEB_ROOT}/${HOSTNAME} || status=4
 	if [ $status -ne 0 ]
 	then
 		debug "make_web_dirs failed with status $status"
@@ -74,12 +76,12 @@ function copy_admin_htpasswd(){
 		debug "Warning, couldn't find htpassword file in $ADMIN_HTPASSWORD"
 		return 1
 	fi
-	cp -a $ADMIN_HTPASSWORD $WEB_ROOT/$1
+	cp -a $ADMIN_HTPASSWORD $WEB_ROOT/$HOSTNAME
 	return $?
 }
 
 function clone_fixmystreet(){
-	cd ${WEB_ROOT}/$1
+	cd ${WEB_ROOT}/${HOSTNAME}
 	su ${FMS_USER} -c "git clone --recursive ${FMS_GIT_URL}"
 	if [ ! $? -eq 0 ]
 	then
@@ -89,6 +91,29 @@ function clone_fixmystreet(){
 	return 0
 }
 
+#  We need to copy our config file, since only the template
+#+ is in the repo.
+#  TODO: generalize /fixmystreet/config into a variable? It will probably not
+#+ change (famous last words).
+function copy_config_file(){
+	if [ ! -e ${CONFIG_FILES_DIR}/${CONFIG_FILE_FIXMYSTREET} ]
+	then
+		debug "Warning: no config file found in ${CONFIG_FILES_DIR}/${CONFIG_FILE_FIXMYSTREET}"
+		return 1
+	fi
+	cp ${CONFIG_FILES_DIR}/${CONFIG_FILE_FIXMYSTREET} ${WEB_ROOT}/${HOSTNAME}/fixmystreet/conf/
+	chown  ${FMS_USER}: ${WEB_ROOT}/${HOSTNAME}/fixmystreet/conf/${CONFIG_FILE_FIXMYSTREET}
+	return $?
+}
+
+#  Compile the translation.
+#  TODO: get the translation from Transifex
+function compile_translations(){
+	cd ${WEB_ROOT}/${HOSTNAME}/fixmystreet
+	su ${FMS_USER} -c "commonlib/bin/gettext-makemo"
+	return $?
+}
+
 # Exit script with an error message
 function die(){
 	echo $1
@@ -96,14 +121,13 @@ function die(){
 }
 ### Begin work ###
 
-[ $# -eq 1 ] || die "Usage: $0 <sitename>"
-
-HOST_NAME=$1
+[ $# -eq 1 ] || die "Usage: $0 <hostname>"
 
 # First, create necessary directories in the web root
-make_web_dirs $HOST_NAME
-# This is fatal. Abort if failure.
-if [ $? -eq 50 ]
+debug "Creating directories in $WEB_ROOT..."
+make_web_dirs
+# This is fatal, could be someone else's dev area. Abort if failure.
+if [ $? -eq 50 ] # Already exists
 then
 	echo "Problem making web dirs. Aborting."
 	exit 1
@@ -111,9 +135,19 @@ fi
 
 # Use DEBUG=true if you want warnings on htpasswd copy.
 # Not fatal (atm the file is empty anyway).
-copy_admin_htpasswd $HOST_NAME
+debug "Copy htpassword file"
+copy_admin_htpasswd
 
 # Now, clone the fixmystreet (from our fork in our repo)
-clone_fixmystreet $HOST_NAME || die "Could not clone git. Aborting."
+debug "Get system files from github"
+clone_fixmystreet || die "Could not clone git. Aborting."
+
+# We need a config file from our store
+debug "Copy the config file"
+copy_config_file || echo "Warning: config file not copied"
+
+# Next, compile our translation .po file
+debug "Compile translations"
+compile_translations || echo "Warning, could not compile translations"
 
 
