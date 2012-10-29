@@ -114,6 +114,28 @@ function compile_translations(){
 	return $?
 }
 
+#  Install the Ruby gems
+#  Needs to be run as ${FMS_USER}.
+function install_ruby_gems(){
+	export GEM_HOME="$WEB_ROOT/$HOSTNAME/gems"
+	mkdir -p "$GEM_HOME"
+	export GEM_PATH=
+	export PATH="$GEM_HOME/bin:$PATH"
+
+	debug "Installing gems (compass)..."
+	gem install --no-ri --no-rdoc compass
+
+	# Use compass to generate the CSS, if it doesn't seem to already
+	# exist:
+
+	if [ ! -f $WEB_ROOT/$HOSTNAME/fixmystreet/web/cobrands/default/base.css ]
+	then
+		debug "Making css from gem..."
+    		$WEB_ROOT/$HOSTNAME/fixmystreet/bin/make_css
+	fi
+}
+
+
 # Exit script with an error message
 function die(){
 	echo $1
@@ -149,5 +171,14 @@ copy_config_file || echo "Warning: config file not copied"
 # Next, compile our translation .po file
 debug "Compile translations"
 compile_translations || echo "Warning, could not compile translations"
+
+# Next, install gems and from that, create css
+debug "Installing gems and CSS..."
+## Can this be done in a nicer way?
+export WEB_ROOT="$WEB_ROOT"
+export HOSTNAME="$HOSTNAME"
+export -f debug
+export -f install_ruby_gems
+su fms -c "install_ruby_gems"
 
 
