@@ -108,7 +108,11 @@ function copy_config_file(){
 
 #  Get the latest translation from Transifex
 function get_translation(){
-	su fms -c "wget https://www.transifex.com/projects/p/fixmystreet/resource/master/l/sv_SE/download/for_use/ -O ${WEB_ROOT}/${HOSTNAME}/fixmystreet/locale/sv_SE.UTF-8/LC_MESSAGES/FixMyStreet.po"
+	# Make sure we are in this scripts directory
+	# so that we can call get_latest_translation.sh
+	# (which is in the same directory).
+	cd "$(dirname "${BASH_SOURCE[0]}")"
+	get_latest_translation.sh $HOSTNAME
 }
 
 #  Compile the translation.
@@ -182,6 +186,9 @@ clone_fixmystreet || die "Could not clone git. Aborting."
 debug "Copy the config file"
 copy_config_file || echo "Warning: config file not copied"
 
+# Get the latest translation
+get_translation
+
 # Next, compile our translation .po file
 debug "Compile translations"
 compile_translations || echo "Warning, could not compile translations"
@@ -194,4 +201,5 @@ install_ruby_gems
 
 # Next, install perl libs (in local)
 debug "Installing perl libs..."
-install_perl_libs 
+install_perl_libs
+ 
