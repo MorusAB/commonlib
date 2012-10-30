@@ -117,13 +117,16 @@ function compile_translations(){
 #  Install the Ruby gems
 #  Needs to be run as ${FMS_USER}.
 function install_ruby_gems(){
+	export WEB_ROOT="$WEB_ROOT"
+	export HOSTNAME="$HOSTNAME"
+	export -f debug
 	export GEM_HOME="$WEB_ROOT/$HOSTNAME/gems"
-	mkdir -p "$GEM_HOME"
+	su fms -c "mkdir -p \"$GEM_HOME\""
 	export GEM_PATH=
 	export PATH="$GEM_HOME/bin:$PATH"
 
 	debug "Installing gems (compass)..."
-	gem install --no-ri --no-rdoc compass
+	su fms -c "gem install --no-ri --no-rdoc compass"
 
 	# Use compass to generate the CSS, if it doesn't seem to already
 	# exist:
@@ -131,10 +134,16 @@ function install_ruby_gems(){
 	if [ ! -f $WEB_ROOT/$HOSTNAME/fixmystreet/web/cobrands/default/base.css ]
 	then
 		debug "Making css from gem..."
-    		$WEB_ROOT/$HOSTNAME/fixmystreet/bin/make_css
+		cd $WEB_ROOT/$HOSTNAME/fixmystreet/
+    		su fms -c "PATH=$GEM_HOME/bin:$PATH bin/make_css"
 	fi
 }
 
+# Install perl libs
+function install_perl_libs(){
+	cd $WEB_ROOT/$HOSTNAME/fixmystreet
+	su fms -c "bin/install_perl_modules"
+}
 
 # Exit script with an error message
 function die(){
@@ -175,10 +184,9 @@ compile_translations || echo "Warning, could not compile translations"
 # Next, install gems and from that, create css
 debug "Installing gems and CSS..."
 ## Can this be done in a nicer way?
-export WEB_ROOT="$WEB_ROOT"
-export HOSTNAME="$HOSTNAME"
-export -f debug
-export -f install_ruby_gems
-su fms -c "install_ruby_gems"
+#export -f install_ruby_gems
+install_ruby_gems
 
-
+# Next, install perl libs (in local)
+debug "Installing perl libs..."
+install_perl_libs 
