@@ -106,6 +106,11 @@ function copy_config_file(){
 	return $?
 }
 
+#  Get the latest translation from Transifex
+function get_translation(){
+	su fms -c "wget https://www.transifex.com/projects/p/fixmystreet/resource/master/l/sv_SE/download/for_use/ -O ${WEB_ROOT}/${HOSTNAME}/fixmystreet/locale/sv_SE.UTF-8/LC_MESSAGES/FixMyStreet.po"
+}
+
 #  Compile the translation.
 #  TODO: get the translation from Transifex
 function compile_translations(){
