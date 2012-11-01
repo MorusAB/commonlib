@@ -359,7 +359,7 @@ debug "Start"
 if grep $2 /etc/init.d/fixmystreet* &> /dev/null
 then
 	echo "The following ports are already taken for fast-cgi:"
-	bad_ports=$(grep bin/cron-wrapper /etc/init.d/fixmystreet*|awk '{print $12}'|cut -d ':' -f2)
+	bad_ports=$(grep bin/cron-wrapper /etc/init.d/fixmystreet*|awk '{print $12}'|cut -d ':' -f2|sort -n)
 	for p in $bad_ports
 	do
 		echo $p
@@ -369,14 +369,13 @@ fi
 if grep $3 /etc/nginx/sites-enabled/* &> /dev/null
 then
 	echo "The following ports are already taken for HTTP:"
-	bad_ports=$(grep "listen " /etc/nginx/sites-enabled/*|grep -v \#|awk '{print $3}'|cut -d ';' -f1)
+	bad_ports=$(grep "listen " /etc/nginx/sites-enabled/*|grep -v \#|awk '{print $3}'|cut -d ';' -f1|sort -n)
 	for p in $bad_ports
 	do
 		echo $p
 	done
 	die "$3 is already used as a port for nginx. Try $((++p))"
 fi
-
 # First, create necessary directories in the web root
 debug "Creating directories in $WEB_ROOT..."
 make_web_dirs
