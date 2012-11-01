@@ -376,7 +376,6 @@ then
 	done
 	die "$3 is already used as a port for nginx. Try $((++p))"
 fi
-die "Testing sanity check done"
 # First, create necessary directories in the web root
 debug "Creating directories in $WEB_ROOT..."
 make_web_dirs
