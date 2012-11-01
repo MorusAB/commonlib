@@ -1,5 +1,5 @@
 #!/bin/bash
-
+set -x
 # Installs a development environment for testing and developing
 # FixaMinGata without touching or interfering with the beta branch.
 
@@ -16,10 +16,13 @@ FMS_GIT_URL=https://github.com/MorusAB/fixmystreet.git
 #+ to be installed.
 WEB_ROOT=/var/www
 
+#  Beta hostname
+BETA_HOSTNAME=beta.fixamingata.se
+
 #  Where is the beta server installed?
 #  We will copy some static files etc from there
 #+ until we know where to store them (GIT?)
-BETA_INSTALL_DIR=${WEB_ROOT}/beta.fixamingata.se
+BETA_INSTALL_DIR=${WEB_ROOT}/${BETA_HOSTNAME}
 
 #  The "gems" directory in beta. For now, we'll just
 #+ copy the gems from beta to our dev area.
@@ -37,7 +40,12 @@ ADMIN_HTPASSWORD=${BETA_INSTALL_DIR}/admin-htpasswd
 
 DEBUG=true
 
+#############
+# Arguments #
+#############
 HOSTNAME=$1
+FAST_CGI_PORT=$2
+NGINX_PORT=$3
 
 function debug(){
 	$DEBUG && echo $1
@@ -51,7 +59,7 @@ function make_web_dirs(){
 	declare -i status;
 	status=0
 
-	if [ -x ${WEB_ROOT}/${HOSTNAME} ]
+	if [ -e ${WEB_ROOT}/${HOSTNAME} ]
 	then
 		debug "Fatal error in make_web_dirs,  ${WEB_ROOT}/${HOSTNAME} already exists."
 		return 50
@@ -108,11 +116,7 @@ function copy_config_file(){
 
 #  Get the latest translation from Transifex
 function get_translation(){
-	# Make sure we are in this scripts directory
-	# so that we can call get_latest_translation.sh
-	# (which is in the same directory).
-	cd "$(dirname "${BASH_SOURCE[0]}")"
-	get_latest_translation.sh $HOSTNAME
+	/root/development/commonlib/bin/get_latest_translation.sh $HOSTNAME
 }
 
 #  Compile the translation.
@@ -126,6 +130,14 @@ function compile_translations(){
 #  Install the Ruby gems
 #  Needs to be run as ${FMS_USER}.
 function install_ruby_gems(){
+	#  We need to pass the --compass flag to sass
+	#+ for unknown reason, to make the css compile.
+	#  I've added a version of the make_css file
+	#+ to our config-files directory, and we'll
+	#+ have to use that (since it has the --compass flag).
+	cp $CONFIG_FILES_DIR/make_css ${WEB_ROOT}/${HOSTNAME}/fixmystreet/bin/
+	chown ${FMS_USER}:${FMS_USER} ${WEB_ROOT}/${HOSTNAME}/fixmystreet/bin/make_css
+	
 	export WEB_ROOT="$WEB_ROOT"
 	export HOSTNAME="$HOSTNAME"
 	export -f debug
@@ -133,7 +145,7 @@ function install_ruby_gems(){
 	su fms -c "mkdir -p \"$GEM_HOME\""
 	export GEM_PATH=
 	export PATH="$GEM_HOME/bin:$PATH"
-
+	export SASS_PATH="$GEM_HOME:$GEM_HOME/gems/compass-0.12.2/frameworks/compass/stylesheets:$GEM_HOME/gems/compass-0.12.2/frameworks/blueprint/stylesheets"
 	debug "Installing gems (compass)..."
 	su fms -c "gem install --no-ri --no-rdoc compass"
 
@@ -144,7 +156,9 @@ function install_ruby_gems(){
 	then
 		debug "Making css from gem..."
 		cd $WEB_ROOT/$HOSTNAME/fixmystreet/
-    		su fms -c "PATH=$GEM_HOME/bin:$PATH bin/make_css"
+		#  I don't know why I have to pass the PATH below
+		#+ but it doesn't work without that.
+    		su fms -c "PATH=$GEM_HOME/bin::$PATH bin/make_css"
 	fi
 }
 
@@ -154,14 +168,214 @@ function install_perl_libs(){
 	su fms -c "bin/install_perl_modules"
 }
 
+#  Make the start-stop script for init.d/
+#+ so that we can start and stop the fixmystreet
+#+ server for this development area.
+#  Note that Rikard changed the stop function
+#+ to use fuse, which therefore is a required
+#  command.
+function make_start-stop_script(){
+	#  fixmystreet-${HOSTNAME%%.*} takes only the cname,
+	#+ e.g. dev.fixamingata.se -> dev
+	#+ in this case producing the file
+	#+ /etc/init.d/fixmystreet-dev
+	TARGET="/etc/init.d/fixmystreet-${HOSTNAME%%.*}"
+	if [ -e "$TARGET" ]
+	then
+		debug "WARNING: $TARGET already exists"
+		return 1
+	fi
+cat > /etc/init.d/fixmystreet-${HOSTNAME%%.*} <<EOF
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          application-catalyst-fixmystreet
+# Required-Start:    \$local_fs \$network
+# Required-Stop:     \$local_fs \$network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts the FastCGI app server for the "FixMyStreet" site
+# Description:       The FastCGI application server for the "FixMyStreet" site
+### END INIT INFO
+
+# This example sysvinit script is based on the helpful example here:
+# http://richard.wallman.org.uk/2010/02/howto-deploy-a-catalyst-application-using-fastcgi-and-nginx/
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+SITE_HOME=${WEB_ROOT}/${HOSTNAME}
+NAME=fixmystreet
+DESC="FixMyStreet app server"
+USER=fms
+
+echo \$DAEMON
+test -f \$DAEMON || exit 0
+
+set -e
+
+start_daemon() {
+  su -l -c "cd \$SITE_HOME/fixmystreet && bin/cron-wrapper web/fixmystreet_app_fastcgi.cgi -d -l :$FAST_CGI_PORT -n 2" \$USER
+}
+
+stop_daemon() {
+  #pkill -f perl-fcgi -u \$USER || true
+  PID=\`fuser $FAST_CGI_PORT/tcp 2> /dev/null|cut -d ':' -f2|awk '{print \$1;}'\`
+  test -z "\$PID" && return 1
+  ps \$PID|grep perl-fcgi-pm 2>&1 >/dev/null && kill \$PID
+}
+
+case "\$1" in
+ start)
+ start_daemon
+ ;;
+ stop)
+ stop_daemon
+ ;;
+ reload|restart|force-reload)
+ stop_daemon
+ sleep 5
+ start_daemon
+ ;;
+ *)
+ N=/etc/init.d/\$NAME
+ echo "Usage: \$N {start|stop|reload|restart|force-reload}" >&2
+ exit 1
+ ;;
+esac
+
+exit 0
+
+EOF
+	# make it -rwxr-xr-x
+	chmod 755 $TARGET 
+	#  Make sure we have fuse installed, it is used
+	#+ for the stop function.
+	which fuser || debug "Warning: No fuse command found!"
+	debug "Starting fixmystreet-${HOSTNAME%%.*}"
+	/etc/init.d/fixmystreet-${HOSTNAME%%.*} start
+	return $?
+}
+
+#  Make the site file for nginx so that we can
+#+ access this development area via http.
+function make_nginx_config(){
+	TARGET=/etc/nginx/sites-enabled/$HOSTNAME
+	if [ -f "$TARGET" ]
+	then
+		debug "Warning: $TARGET already exists. Config file not created."
+		return 1
+	fi
+	cat > $TARGET <<EOF
+# An example configuration for running FixMyStreet under nginx.  You
+# will also need to set up the FixMyStreet Catalyst FastCGI backend.
+# An example sysvinit script to help with this is shown given in the file
+# sysvinit-catalyst-fastcgi.example in this directory.
+#
+# See our installation help at http://code.fixmystreet.com/
+
+server {
+
+    access_log /var/www/beta.fixamingata.se/logs/dev1-access.log;
+    error_log /var/www/beta.fixamingata.se/logs/dev1-error.log;
+    # $HOSTNAME listens to $NGINX_PORT
+    listen $NGINX_PORT;
+    server_name $HOSTNAME;
+    root ${WEB_ROOT}/${HOSTNAME}/fixmystreet/web;
+    error_page 503 /down.html;
+
+    # Make sure that Javascript and CSS are compressed.  (HTML is
+    # already compressed under the default configuration of the nginx
+    # package.)
+
+    gzip on;
+    gzip_disable "msie6";
+    gzip_types application/javascript application/x-javascript text/css;
+
+    # Set a long expiry time for CSS and Javascript, and prevent
+    # the mangling of Javascript by proxies:
+
+    location ~ \.css$ {
+        expires 10y;
+    }
+
+    location ~ \.js$ {
+        add_header Cache-Control no-transform;
+        expires 10y;
+        try_files \$uri @catalyst;
+    }
+
+    # These rewrite rules are ported from the Apache configuration in
+    # conf/httpd.conf
+
+    rewrite ^/rss/council/([0-9]+)$  /rss/reports/\$1 permanent;
+    rewrite ^/report$                /reports        permanent;
+    rewrite '^/{/rss/(.*)}$'         /rss/\$1         permanent;
+    rewrite '^/reports/{/rss/(.*)}$' /rss/\$1         permanent;
+    rewrite ^/alerts/?$              /alert          permanent;
+
+    location /mapit {
+        proxy_pass http://dev.fixamingata.se:8005/;
+        proxy_set_header X-Real-IP \$remote_addr;
+    }
+
+    location /admin {
+        auth_basic "FixMyStreet admin interface";
+        auth_basic_user_file /var/www/beta.fixamingata.se/admin-htpasswd;
+        try_files \$uri @catalyst;
+    }
+
+    location / {
+        if (-f $document_root/down.html) {
+            return 503;
+        }
+        try_files \$uri @catalyst;
+    }
+
+    location /down.html {
+        internal;
+    }
+
+    location @catalyst {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param PATH_INFO \$fastcgi_script_name;
+        fastcgi_param SCRIPT_NAME '';
+	# Set dev1's fastcgi to $FAST_CGI_PORT
+        fastcgi_pass 127.0.0.1:${FAST_CGI_PORT};
+    }
+}
+EOF
+	/etc/init.d/nginx restart
+	return $?	
+}
+
 # Exit script with an error message
 function die(){
-	echo $1
+	echo -e "$1"
 	exit 1
 }
-### Begin work ###
+###### Begin work ######
+debug "Start"
 
-[ $# -eq 1 ] || die "Usage: $0 <hostname>"
+# Sanity checks
+[ $# -eq 3 ] || die "Usage: $0 <hostname> <cgi-port> <http-port>\ne.g $0 dev1.fixamingata.se 9001 8001"
+if grep $2 /etc/init.d/fixmystreet* &> /dev/null
+then
+	echo "The following ports are already taken for fast-cgi:"
+	bad_ports=$(grep bin/cron-wrapper /etc/init.d/fixmystreet*|awk '{print $12}'|cut -d ':' -f2)
+	for p in $bad_ports
+	do
+		echo $p
+	done
+	die "$2 is already used as a port for fast-cgi. Try $((++p))"
+fi 
+if grep $3 /etc/nginx/sites-enabled/* &> /dev/null
+then
+	echo "The following ports are already taken for HTTP:"
+	bad_ports=$(grep "listen " /etc/nginx/sites-enabled/*|grep -v \#|awk '{print $3}'|cut -d ';' -f1)
+	for p in $bad_ports
+	do
+		echo $p
+	done
+	die "$3 is already used as a port for nginx. Try $((++p))"
+fi
 
 # First, create necessary directories in the web root
 debug "Creating directories in $WEB_ROOT..."
@@ -202,4 +416,10 @@ install_ruby_gems
 # Next, install perl libs (in local)
 debug "Installing perl libs..."
 install_perl_libs
- 
+
+# We need config files:
+# init-script
+make_start-stop_script
+
+# Site config for nginx:
+make_nginx_config
