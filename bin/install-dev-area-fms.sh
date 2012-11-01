@@ -116,7 +116,7 @@ function copy_config_file(){
 
 #  Get the latest translation from Transifex
 function get_translation(){
-	/root/development/commonlib/bin/get_latest_translation.sh $HOSTNAME
+	/root/development/config-scripts/fixmystreet/get_latest_translation.sh $HOSTNAME
 }
 
 #  Compile the translation.
@@ -353,7 +353,6 @@ function die(){
 }
 ###### Begin work ######
 debug "Start"
-
 # Sanity checks
 [ $# -eq 3 ] || die "Usage: $0 <hostname> <cgi-port> <http-port>\ne.g $0 dev1.fixamingata.se 9001 8001"
 if grep $2 /etc/init.d/fixmystreet* &> /dev/null
