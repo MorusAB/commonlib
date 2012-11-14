@@ -78,14 +78,33 @@ function make_web_dirs(){
 	return $status
 }
 
-function copy_admin_htpasswd(){
+function prompt_for_admin_htpasswd(){
 	if [ ! -e $ADMIN_HTPASSWORD ]
 	then
 		debug "Warning, couldn't find htpassword file in $ADMIN_HTPASSWORD"
+		debug "No password is set for /admin"
+		debug "Run:"
+		debug "\$ htpasswd -c /var/www/${HOSTNAME}/admin-htpasswd <adminusername>"
 		return 1
 	fi
-	cp -a $ADMIN_HTPASSWORD $WEB_ROOT/$HOSTNAME
-	return $?
+	echo "Warning:"
+	echo "Your installation at ${WEB_ROOT}/${HOSTNAME}"
+	echo "will share .htpasswd with ${BETA_HOSTNAME}."
+	echo "If you want a different password for your area, you'll"
+	echo "need to run:"
+	echo "\$ htpasswd -c /var/www/${HOSTNAME}/admin-htpasswd <adminusername>"
+	echo "and change the nginx configuration to point out that file."
+	echo
+	read -t 5 -p "Set password now? [y/n]" answer
+	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]
+	then
+		read -p "Admin user name: " admin
+		su ${FMS_USER} -c "htpasswd -c /var/www/${HOSTNAME}/admin-htpasswd $admin"
+		return $?
+	else
+		echo "OK, no password will be set for now."
+		return 0
+	fi
 }
 
 function clone_fixmystreet(){
@@ -353,6 +372,7 @@ function die(){
 }
 ###### Begin work ######
 debug "Start"
+
 # Sanity checks
 [ $# -eq 3 ] || die "Usage: $0 <hostname> <cgi-port> <http-port>\ne.g $0 dev1.fixamingata.se 9001 8001"
 if grep $2 /etc/init.d/fixmystreet* &> /dev/null
@@ -387,8 +407,8 @@ fi
 
 # Use DEBUG=true if you want warnings on htpasswd copy.
 # Not fatal (atm the file is empty anyway).
-debug "Copy htpassword file"
-copy_admin_htpasswd
+debug "Investigate htpassword file"
+prompt_for_admin_htpasswd
 
 # Now, clone the fixmystreet (from our fork in our repo)
 debug "Get system files from github"
