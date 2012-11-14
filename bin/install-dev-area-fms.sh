@@ -93,7 +93,8 @@ function prompt_for_admin_htpasswd(){
 	echo "If you want a different password for your area, you'll"
 	echo "need to run:"
 	echo "\$ htpasswd -c /var/www/${HOSTNAME}/admin-htpasswd <adminusername>"
-	echo "and change the nginx configuration to point out that file."
+	echo "and change the nginx configuration file"
+	echo "for your host to point out that file."
 	echo
 	read -t 5 -p "Set password now? [y/n]" answer
 	if [ "$answer" = "y" ] || [ "$answer" = "Y" ]
