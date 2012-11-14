@@ -155,9 +155,12 @@ function install_ruby_gems(){
 	#  I've added a version of the make_css file
 	#+ to our config-files directory, and we'll
 	#+ have to use that (since it has the --compass flag).
-	cp $CONFIG_FILES_DIR/make_css ${WEB_ROOT}/${HOSTNAME}/fixmystreet/bin/
-	chown ${FMS_USER}:${FMS_USER} ${WEB_ROOT}/${HOSTNAME}/fixmystreet/bin/make_css
-	
+	# cp $CONFIG_FILES_DIR/make_css ${WEB_ROOT}/${HOSTNAME}/fixmystreet/bin/
+	# chown ${FMS_USER}:${FMS_USER} ${WEB_ROOT}/${HOSTNAME}/fixmystreet/bin/make_css
+	# The above two lines are not needed. I put the make_css in our repo instead.
+	# This might be a problem when/if we do a pull request to MySociety, since
+	# they might prefer not to have the --compass flag.	
+
 	export WEB_ROOT="$WEB_ROOT"
 	export HOSTNAME="$HOSTNAME"
 	export -f debug
