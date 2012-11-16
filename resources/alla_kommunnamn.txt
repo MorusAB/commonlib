@@ -1,0 +1,290 @@
+Ale
+Alingsås
+Älmhult
+Älvdalen
+Alvesta
+Älvkarleby
+Älvsbyn
+Åmål
+Aneby
+Ånge
+Ängelholms kommun
+Arboga
+Åre
+Årjäng
+Arjeplog
+Arvidsjaur
+Arvika
+Åsele
+Askersund
+Åstorps kommun
+Åtvidaberg
+Avesta
+Båstads kommun
+Bengtsfors
+Berg
+Bjurholm
+Bjuvs kommun
+Boden
+Bollebygd
+Bollnäs
+Borås
+Borgholm
+Borlänge
+Botkyrka
+Boxholm
+Bräcke
+Bromölla kommun
+Burlövs kommun
+Dals-Ed
+Danderyd
+Degerfors
+Dorotea
+Eda
+Ekerö
+Eksjö
+Emmaboda
+Enköping
+Eskilstuna
+Eslövs kommun
+Essunga
+Fagersta
+Falkenberg
+Falköping
+Falun
+Färgelanda
+Filipstad
+Finspång
+Flen
+Forshaga
+Gagnef
+Gällivare
+Gävle
+Gislaved
+Gnesta
+Gnosjö
+Göteborgs kommun
+Götene
+Gotland
+Grästorp
+Grums
+Gullspång
+Habo
+Håbo
+Hagfors
+Hällefors
+Hallsberg
+Hallstahammar
+Halmstad
+Hammarö
+Haninge
+Haparanda
+Härjedalen
+Härnösand
+Härryda kommun
+Hässleholms kommun
+Heby
+Hedemora
+Helsingborgs kommun
+Herrljunga
+Hjo
+Hofors
+Höganäs kommun
+Högsby
+Höörs kommun
+Hörby kommun
+Huddinge
+Hudiksvall
+Hultsfred
+Hylte
+Järfälla
+Jokkmokk
+Jönköping
+Kalix
+Kalmar
+Karlsborg
+Karlshamn
+Karlskoga
+Karlskrona
+Karlstad
+Katrineholm
+Kävlinge kommun
+Kil
+Kinda
+Kiruna
+Klippans kommun
+Knivsta
+Köping
+Kramfors
+Kristianstads kommun
+Kristinehamn
+Krokom
+Kumla
+Kungälv
+Kungsbacka
+Kungsör
+Laholm
+Landskrona kommun
+Laxå
+Lekeberg
+Leksand
+Lerum
+Lessebo
+Lidingö
+Lidköping
+Lilla Edet
+Lindesberg
+Linköping
+Ljungby
+Ljusdal
+Ljusnarsberg
+Lomma kommun
+Ludvika
+Luleå
+Lunds kommun
+Lycksele
+Lysekil
+Malå
+Malmö kommun
+Malung-Sälen
+Mariestad
+Mark
+Markaryd
+Mellerud
+Mjölby
+Mölndals kommun
+Mönsterås
+Mora
+Mörbylånga
+Motala
+Mullsjö
+Munkedal
+Munkfors
+Nacka
+Nässjö
+Nora
+Norberg
+Nordanstig
+Nordmaling
+Norrköping
+Norrtälje
+Norsjö
+Nybro
+Nyköping
+Nykvarn
+Nynäshamn
+Ockelbo
+Öckerö
+Ödeshög
+Olofström
+Örebro
+Örkelljunga kommun
+Örnsköldsvik
+Orsa
+Orust
+Osby kommun
+Oskarshamn
+Österåker
+Östersund
+Östhammar
+Östra Göinge kommun
+Ovanåker
+Överkalix
+Övertorneå
+Oxelösund
+Pajala
+Partille kommun
+Perstorps kommun
+Piteå
+Ragunda
+Rättvik
+Robertsfors
+Ronneby
+Säffle
+Sala
+Salem
+Sandviken
+Säter
+Sävsjö
+Sigtuna
+Simrishamns kommun
+Sjöbo kommun
+Skara
+Skellefteå
+Skinnskatteberg
+Skövde
+Skurups kommun
+Smedjebacken
+Söderhamn
+Söderköping
+Södertälje
+Sollefteå
+Sollentuna
+Solna
+Sölvesborg
+Sorsele
+Sotenäs
+Staffanstorps kommun
+Stenungsund
+Stockholm
+Storfors
+Storuman
+Strängnäs
+Strömstad
+Strömsund
+Sundbyberg
+Sundsvall
+Sunne
+Surahammar
+Svalövs kommun
+Svedala kommun
+Svenljunga
+Täby
+Tanum
+Tibro
+Tidaholm
+Tierp
+Timrå
+Tingsryd
+Tjörn
+Tomelilla kommun
+Töreboda
+Torsås
+Torsby
+Tranås
+Tranemo
+Trelleborgs kommun
+Trollhättan
+Trosa
+Tyresö
+Uddevalla
+Ulricehamn
+Umeå
+Upplands-Bro
+Upplands Väsby
+Uppsala
+Uppvidinge
+Vadstena
+Vaggeryd
+Valdemarsvik
+Vallentuna
+Vänersborg
+Vännäs
+Vansbro
+Vara
+Varberg
+Vårgårda
+Värmdö
+Värnamo
+Västerås
+Västervik
+Vaxholm
+Växjö
+Vellinge kommun
+Vetlanda
+Vilhelmina
+Vimmerby
+Vindeln
+Vingåker
+Ydre
+Ystads kommun
