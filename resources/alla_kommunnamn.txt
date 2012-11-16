@@ -1,26 +1,13 @@
 Ale
 Alingsås
-Älmhult
-Älvdalen
 Alvesta
-Älvkarleby
-Älvsbyn
-Åmål
 Aneby
-Ånge
-Ängelholms kommun
 Arboga
-Åre
-Årjäng
 Arjeplog
 Arvidsjaur
 Arvika
-Åsele
 Askersund
-Åstorps kommun
-Åtvidaberg
 Avesta
-Båstads kommun
 Bengtsfors
 Berg
 Bjurholm
@@ -28,14 +15,15 @@ Bjuvs kommun
 Boden
 Bollebygd
 Bollnäs
-Borås
 Borgholm
 Borlänge
+Borås
 Botkyrka
 Boxholm
-Bräcke
 Bromölla kommun
+Bräcke
 Burlövs kommun
+Båstads kommun
 Dals-Ed
 Danderyd
 Degerfors
@@ -52,53 +40,53 @@ Fagersta
 Falkenberg
 Falköping
 Falun
-Färgelanda
 Filipstad
 Finspång
 Flen
 Forshaga
+Färgelanda
 Gagnef
-Gällivare
-Gävle
 Gislaved
 Gnesta
 Gnosjö
+Gotland
+Grums
+Grästorp
+Gullspång
+Gällivare
+Gävle
 Göteborgs kommun
 Götene
-Gotland
-Grästorp
-Grums
-Gullspång
 Habo
-Håbo
 Hagfors
-Hällefors
 Hallsberg
 Hallstahammar
 Halmstad
 Hammarö
 Haninge
 Haparanda
-Härjedalen
-Härnösand
-Härryda kommun
-Hässleholms kommun
 Heby
 Hedemora
 Helsingborgs kommun
 Herrljunga
 Hjo
 Hofors
-Höganäs kommun
-Högsby
-Höörs kommun
-Hörby kommun
 Huddinge
 Hudiksvall
 Hultsfred
 Hylte
-Järfälla
+Håbo
+Hällefors
+Härjedalen
+Härnösand
+Härryda kommun
+Hässleholms kommun
+Höganäs kommun
+Högsby
+Hörby kommun
+Höörs kommun
 Jokkmokk
+Järfälla
 Jönköping
 Kalix
 Kalmar
@@ -108,21 +96,21 @@ Karlskoga
 Karlskrona
 Karlstad
 Katrineholm
-Kävlinge kommun
 Kil
 Kinda
 Kiruna
 Klippans kommun
 Knivsta
-Köping
 Kramfors
 Kristianstads kommun
 Kristinehamn
 Krokom
 Kumla
-Kungälv
 Kungsbacka
 Kungsör
+Kungälv
+Kävlinge kommun
+Köping
 Laholm
 Landskrona kommun
 Laxå
@@ -144,24 +132,23 @@ Luleå
 Lunds kommun
 Lycksele
 Lysekil
-Malå
 Malmö kommun
 Malung-Sälen
+Malå
 Mariestad
 Mark
 Markaryd
 Mellerud
 Mjölby
-Mölndals kommun
-Mönsterås
 Mora
-Mörbylånga
 Motala
 Mullsjö
 Munkedal
 Munkfors
+Mölndals kommun
+Mönsterås
+Mörbylånga
 Nacka
-Nässjö
 Nora
 Norberg
 Nordanstig
@@ -170,58 +157,41 @@ Norrköping
 Norrtälje
 Norsjö
 Nybro
-Nyköping
 Nykvarn
+Nyköping
 Nynäshamn
+Nässjö
 Ockelbo
-Öckerö
-Ödeshög
 Olofström
-Örebro
-Örkelljunga kommun
-Örnsköldsvik
 Orsa
 Orust
 Osby kommun
 Oskarshamn
-Österåker
-Östersund
-Östhammar
-Östra Göinge kommun
 Ovanåker
-Överkalix
-Övertorneå
 Oxelösund
 Pajala
 Partille kommun
 Perstorps kommun
 Piteå
 Ragunda
-Rättvik
 Robertsfors
 Ronneby
-Säffle
+Rättvik
 Sala
 Salem
 Sandviken
-Säter
-Sävsjö
 Sigtuna
 Simrishamns kommun
 Sjöbo kommun
 Skara
 Skellefteå
 Skinnskatteberg
-Skövde
 Skurups kommun
+Skövde
 Smedjebacken
-Söderhamn
-Söderköping
-Södertälje
 Sollefteå
 Sollentuna
 Solna
-Sölvesborg
 Sorsele
 Sotenäs
 Staffanstorps kommun
@@ -239,7 +209,13 @@ Surahammar
 Svalövs kommun
 Svedala kommun
 Svenljunga
-Täby
+Säffle
+Säter
+Sävsjö
+Söderhamn
+Söderköping
+Södertälje
+Sölvesborg
 Tanum
 Tibro
 Tidaholm
@@ -248,15 +224,16 @@ Timrå
 Tingsryd
 Tjörn
 Tomelilla kommun
-Töreboda
-Torsås
 Torsby
-Tranås
+Torsås
 Tranemo
+Tranås
 Trelleborgs kommun
 Trollhättan
 Trosa
 Tyresö
+Täby
+Töreboda
 Uddevalla
 Ulricehamn
 Umeå
@@ -268,23 +245,46 @@ Vadstena
 Vaggeryd
 Valdemarsvik
 Vallentuna
-Vänersborg
-Vännäs
 Vansbro
 Vara
 Varberg
-Vårgårda
-Värmdö
-Värnamo
-Västerås
-Västervik
 Vaxholm
-Växjö
 Vellinge kommun
 Vetlanda
 Vilhelmina
 Vimmerby
 Vindeln
 Vingåker
+Vårgårda
+Vänersborg
+Vännäs
+Värmdö
+Värnamo
+Västervik
+Västerås
+Växjö
 Ydre
 Ystads kommun
+Åmål
+Ånge
+Åre
+Årjäng
+Åsele
+Åstorps kommun
+Åtvidaberg
+Älmhult
+Älvdalen
+Älvkarleby
+Älvsbyn
+Ängelholms kommun
+Öckerö
+Ödeshög
+Örebro
+Örkelljunga kommun
+Örnsköldsvik
+Östersund
+Österåker
+Östhammar
+Östra Göinge kommun
+Överkalix
+Övertorneå
