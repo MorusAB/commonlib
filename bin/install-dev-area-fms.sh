@@ -240,9 +240,10 @@ start_daemon() {
 
 stop_daemon() {
   #pkill -f perl-fcgi -u \$USER || true
-  PID=\`fuser $FAST_CGI_PORT/tcp 2> /dev/null|cut -d ':' -f2|awk '{print \$1;}'\`
+  PID=\`fuser $FAST_CGI_PORT/tcp 2> /dev/null|cut -d ':' -f2\`
   test -z "\$PID" && return 1
-  ps \$PID|grep perl-fcgi-pm 2>&1 >/dev/null && kill \$PID
+  PID=\`ps \$PID|grep perl-fcgi-pm|awk '{ print \$1 }'\`
+  kill \$PID
 }
 
 case "\$1" in
